@@ -35,13 +35,16 @@ public class DeliveryManager : MonoBehaviour
         {
             spawnRecipeTimer = spawnRecipeTimerMax;
 
-            if (waitingRecipeSOList.Count < waitingRecipeMax)
+            if (KitchenGameManager.Instance.IsGamePlaying())
             {
-                RecipeSO recipeSO = recipeListSO.recipeSOList[Random.Range(0, recipeListSO.recipeSOList.Count)];
+                if (waitingRecipeSOList.Count < waitingRecipeMax)
+                {
+                    RecipeSO recipeSO = recipeListSO.recipeSOList[Random.Range(0, recipeListSO.recipeSOList.Count)];
 
-                waitingRecipeSOList.Add(recipeSO);
+                    waitingRecipeSOList.Add(recipeSO);
                 
-                OnRecipeSpawned?.Invoke(this, EventArgs.Empty);
+                    OnRecipeSpawned?.Invoke(this, EventArgs.Empty);
+                }   
             }
         }
     }

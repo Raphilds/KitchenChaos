@@ -5,11 +5,15 @@ using UnityEngine;
 
 public class KitchenGameManager : MonoBehaviour
 {
+    private static string TIME_SELECTED_KEY = "TimeSelected";
+    
     public static KitchenGameManager Instance { get; private set; }
     
     public event EventHandler OnStateChanged;
     public event EventHandler OnGamePaused;
     public event EventHandler OnGameUnpaused;
+    
+    [SerializeField] private float gamePlayingTimerMax = 60f;
 
     private enum State
     {
@@ -21,10 +25,8 @@ public class KitchenGameManager : MonoBehaviour
 
     private State state;
     
-    private float waitingToStartTimer = 1f;
     private float coutingdownToStartTimer = 3f;
     private float gamePlayingTimer;
-    private float gamePlayingTimerMax = 10f;
     private bool isGamePaused = false;
     
     private void Awake()
@@ -36,7 +38,23 @@ public class KitchenGameManager : MonoBehaviour
 
     private void Start()
     {
+        if (PlayerPrefs.HasKey(TIME_SELECTED_KEY))
+        {
+            gamePlayingTimerMax = PlayerPrefs.GetInt(TIME_SELECTED_KEY);
+        }
+        
         GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
+        
+        GameInput.Instance.OnInteractionAction += GameInput_OnInteractionAction;
+    }
+
+    private void GameInput_OnInteractionAction(object sender, EventArgs e)
+    {
+        if (state == State.WaitingToStart)
+        {
+            state = State.CountingdownToStart;
+            OnStateChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     private void GameInput_OnPauseAction(object sender, EventArgs e)
@@ -49,13 +67,7 @@ public class KitchenGameManager : MonoBehaviour
         switch (state)
         {
             case State.WaitingToStart:
-                waitingToStartTimer -= Time.deltaTime;
                 
-                if (waitingToStartTimer <= 0f)
-                {
-                    state = State.CountingdownToStart;
-                    OnStateChanged?.Invoke(this, EventArgs.Empty);
-                }
                 break;
             case State.CountingdownToStart:
                 coutingdownToStartTimer -= Time.deltaTime;
@@ -68,6 +80,11 @@ public class KitchenGameManager : MonoBehaviour
                 }
                 break;
             case State.GamePlaying:
+                if (IsInfiniteTimeSelected())
+                {
+                    return;
+                }
+                
                 gamePlayingTimer -= Time.deltaTime;
                 
                 if (gamePlayingTimer <= 0f)
@@ -106,6 +123,11 @@ public class KitchenGameManager : MonoBehaviour
     
     public float GetGamePlayingTimerNormalized()
     {
+        if (IsInfiniteTimeSelected())
+        {
+            return 1;
+        }
+        
         return 1 - gamePlayingTimer / gamePlayingTimerMax;
     }
     
@@ -125,5 +147,10 @@ public class KitchenGameManager : MonoBehaviour
         Time.timeScale = 1;
         
         OnGameUnpaused?.Invoke(this, EventArgs.Empty);
+    }
+    
+    private bool IsInfiniteTimeSelected()
+    {
+        return gamePlayingTimerMax == 0;
     }
 }
