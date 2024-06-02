@@ -9,7 +9,7 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Button playButton;
     [SerializeField] private Button quitButton;
 
-    private void Start()
+    private void Awake()
     {
         playButton.onClick.AddListener(() =>
         {
@@ -20,5 +20,7 @@ public class MainMenuUI : MonoBehaviour
         {
             Application.Quit();
         });
+        
+        Time.timeScale = 1f;
     }
 }
