@@ -82,8 +82,6 @@ public class KitchenGameManager : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        
-        Debug.Log($"Current state: {state}");
     }
     
     public bool IsGamePlaying()
