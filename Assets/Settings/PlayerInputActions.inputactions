@@ -155,21 +155,10 @@
                 },
                 {
                     "name": "",
-                    "id": "1aff7209-178a-4722-abf2-2fc4bbcfc127",
-                    "path": "<Gamepad>/dpad",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "241a8c93-0ba8-44ce-a7d4-a50d17dc85d0",
                     "path": "<Gamepad>/leftStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "StickDeadzone(min=0.5)",
                     "groups": "",
                     "action": "Move",
                     "isComposite": false,
